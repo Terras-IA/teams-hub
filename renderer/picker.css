@@ -1,0 +1,38 @@
+:root {
+  --bg: #f5f6f8; --panel: #fff; --text: #1c1f26; --muted: #6b7280; --line: #e3e5ea; --accent: #5b5fc7;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #1d2027; --panel: #262a33; --text: #e6e8ec; --muted: #9aa1ad; --line: #353a45; }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  display: flex; flex-direction: column;
+  font: 14px/1.4 system-ui, Ubuntu, sans-serif;
+  background: var(--bg); color: var(--text);
+}
+header { padding: 16px 20px 4px; }
+h1 { margin: 0; font-size: 18px; }
+.muted { color: var(--muted); margin: 2px 0 0; }
+nav { display: flex; gap: 6px; padding: 10px 20px; }
+button {
+  font: inherit; padding: 7px 14px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--panel); color: var(--text);
+}
+button:disabled { opacity: .5; cursor: default; }
+nav button.ativo { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+main {
+  flex: 1; overflow-y: auto; padding: 6px 20px 12px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; align-content: start;
+}
+.fonte {
+  padding: 8px; border-radius: 10px; border: 2px solid transparent; background: var(--panel); cursor: pointer;
+  display: flex; flex-direction: column; gap: 6px; text-align: left;
+}
+.fonte:hover { border-color: var(--line); }
+.fonte.escolhida { border-color: var(--accent); }
+.fonte img { width: 100%; aspect-ratio: 16 / 9; object-fit: contain; background: #000; border-radius: 6px; }
+.fonte span { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vazio { color: var(--muted); grid-column: 1 / -1; }
+footer { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 20px; border-top: 1px solid var(--line); }
+#compartilhar:not(:disabled) { background: var(--accent); border-color: var(--accent); color: #fff; }

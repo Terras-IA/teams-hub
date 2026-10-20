@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'">
+  <title>Teams Hub</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav id="sidebar"></nav>
+  <main id="content">
+    <section id="agenda" class="pane">
+      <header class="agenda-head">
+        <div>
+          <h1>Agenda</h1>
+          <p id="agenda-status" class="muted">carregando…</p>
+        </div>
+        <div class="agenda-actions">
+          <select id="agenda-dias">
+            <option value="1">Hoje</option>
+            <option value="3">3 dias</option>
+            <option value="7" selected>7 dias</option>
+            <option value="14">14 dias</option>
+            <option value="30">30 dias</option>
+          </select>
+          <button id="agenda-refresh" type="button">Atualizar</button>
+          <button id="agenda-espelhar" type="button" title="Sincroniza as reuniões das contas Microsoft no calendário 'Teams (cópia)' do Google (próximos 30 dias)">Copiar Teams → Google</button>
+        </div>
+      </header>
+      <p id="espelho-msg" class="msg"></p>
+      <div id="agenda-next"></div>
+      <div id="agenda-avisos"></div>
+      <div id="agenda-list"></div>
+    </section>
+    <section id="contas" class="pane">
+      <h1>Contas</h1>
+
+      <h2>Teams</h2>
+      <p class="muted">Cada conta abre numa sessão própria e fica logada. Remover apaga o login salvo dela.</p>
+      <div id="teams-lista" class="lista"></div>
+      <form id="teams-novo" class="linha novo">
+        <input name="cor" type="color" value="#8e44ad" title="Cor">
+        <input name="id" placeholder="Sigla" maxlength="6" required>
+        <input name="nome" placeholder="Nome (ex.: Empresa ABC)" required>
+        <input name="email" type="email" placeholder="E-mail (opcional)">
+        <button type="submit">Adicionar</button>
+      </form>
+      <p id="teams-msg" class="msg"></p>
+
+      <div id="secao-agendas">
+      <h2>Agendas Google</h2>
+      <p class="muted">Leitura pela API do Google. "Autorizar" abre o consentimento no seu navegador.
+        Enquanto o app do Google estiver em modo teste, só e-mails cadastrados como usuário de teste
+        no Google Cloud conseguem autorizar, e o acesso precisa ser renovado a cada 7 dias.</p>
+      <div id="google-lista" class="lista"></div>
+      <form id="google-novo" class="linha novo">
+        <input name="cor" type="color" value="#db4437" title="Cor">
+        <input name="nome" placeholder="Nome (ex.: Igreja)" required>
+        <input name="conta" type="email" placeholder="Gmail" required>
+        <button type="submit">Adicionar e autorizar</button>
+      </form>
+      <p id="google-msg" class="msg"></p>
+
+      <h2>Agendas Microsoft</h2>
+      <p class="muted">Agenda de outra empresa no Microsoft 365 depende de um app registrado no tenant dela
+        ou de um calendário publicado (.ics). Isso continua pelo terminal: veja a skill terras-agenda.</p>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

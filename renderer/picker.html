@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src data:; style-src 'self'; script-src 'self'">
+  <title>Compartilhar tela</title>
+  <link rel="stylesheet" href="picker.css">
+</head>
+<body>
+  <header>
+    <h1>O que você quer compartilhar?</h1>
+    <p id="quem" class="muted"></p>
+  </header>
+  <nav>
+    <button type="button" data-tipo="screen" class="ativo">Tela inteira</button>
+    <button type="button" data-tipo="window">Janela</button>
+  </nav>
+  <main id="fontes"></main>
+  <footer>
+    <button type="button" id="cancelar">Cancelar</button>
+    <button type="button" id="compartilhar" disabled>Compartilhar</button>
+  </footer>
+  <script src="picker.js"></script>
+</body>
+</html>

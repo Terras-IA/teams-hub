@@ -1,0 +1,72 @@
+{
+  "name": "teams-hub",
+  "version": "1.0.0",
+  "description": "Várias contas do Microsoft Teams e do Outlook numa janela só, com avisos e contador de não lidas",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --linux deb"
+  },
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^38.8.6",
+    "electron-builder": "^26.15.3"
+  },
+  "allowScripts": {
+    "electron@38.8.6": true
+  },
+  "private": true,
+  "productName": "Teams Hub",
+  "author": {
+    "name": "TerrasIA",
+    "email": "contato@terrasia.app",
+    "url": "https://www.terrasia.app"
+  },
+  "build": {
+    "appId": "br.com.terrasia.teamshub",
+    "productName": "Teams Hub",
+    "executableName": "teams-hub",
+    "files": [
+      "main.js",
+      "preload.js",
+      "webview-preload.js",
+      "picker-preload.js",
+      "renderer/**",
+      "icons/**",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "linux": {
+      "target": [
+        "deb"
+      ],
+      "category": "Network",
+      "icon": "icons/icon.png",
+      "synopsis": "Contas do Teams e do Outlook numa janela só",
+      "desktop": {
+        "entry": {
+          "StartupWMClass": "teams-hub"
+        }
+      },
+      "maintainer": "TerrasIA <contato@terrasia.app>",
+      "vendor": "TerrasIA"
+    },
+    "deb": {
+      "depends": [
+        "libnotify4",
+        "libxss1",
+        "libnss3",
+        "libgbm1"
+      ]
+    },
+    "copyright": "Copyright © 2026 TerrasIA"
+  },
+  "homepage": "https://github.com/Terras-IA/teams-hub",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Terras-IA/teams-hub.git"
+  }
+}
