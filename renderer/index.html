@@ -32,8 +32,49 @@
       <div id="agenda-avisos"></div>
       <div id="agenda-list"></div>
     </section>
+    <section id="skills" class="pane">
+      <aside class="sk-catalogo">
+        <h1>Skills</h1>
+        <input id="sk-busca" type="search" placeholder="Buscar skill…">
+        <p id="sk-total" class="muted"></p>
+        <div id="sk-lista"></div>
+      </aside>
+      <div class="sk-painel">
+        <div id="sk-vazio" class="muted">Escolha uma skill na lista.</div>
+        <form id="sk-form" hidden>
+          <div class="sk-titulo">
+            <h2 id="sk-nome"></h2>
+            <button id="sk-fav" type="button" title="Favorita">☆</button>
+          </div>
+          <p id="sk-desc" class="muted"></p>
+          <p id="sk-sensivel" class="aviso" hidden>Esta skill publica ou envia algo. Aqui ela roda só em modo plano;
+            para executar de verdade, use "Continuar no terminal" depois.</p>
+          <textarea id="sk-pedido" rows="4" placeholder="O que você quer que a skill faça (opcional)"></textarea>
+          <div class="sk-opcoes">
+            <label>Conta <select id="sk-conta"></select></label>
+            <label title="Sem janela o Claude não consegue pedir aprovação">Permissão
+              <select id="sk-modo">
+                <option value="plan">Só planejar (lê, não altera)</option>
+                <option value="dontAsk" selected>Padrão (recusa o que pediria aprovação)</option>
+                <option value="acceptEdits">Aceitar edições de arquivo</option>
+              </select>
+            </label>
+            <label class="sk-pasta">Pasta <span id="sk-pasta"></span> <button id="sk-pasta-btn" type="button">Trocar</button></label>
+          </div>
+          <div class="sk-acoes">
+            <button id="sk-rodar" type="submit" class="primario">Rodar</button>
+            <button id="sk-cancelar" type="button" hidden>Cancelar</button>
+            <button id="sk-continuar" type="button" hidden>Continuar no terminal</button>
+            <span id="sk-msg" class="msg"></span>
+          </div>
+        </form>
+        <div id="sk-saida"></div>
+        <h2 class="sk-hist-titulo">Histórico</h2>
+        <div id="sk-historico"></div>
+      </div>
+    </section>
     <section id="contas" class="pane">
-      <h1>Contas</h1>
+      <h1>Configurações</h1>
 
       <h2>Teams</h2>
       <p class="muted">Cada conta abre numa sessão própria e fica logada. Remover apaga o login salvo dela.</p>
@@ -46,6 +87,84 @@
         <button type="submit">Adicionar</button>
       </form>
       <p id="teams-msg" class="msg"></p>
+
+      <h2>Abas de site</h2>
+      <p class="muted">Sites que ficam na barra lateral, cada um com login próprio. Marque "navegador" para abrir
+        fora do app (o Google, por exemplo, recusa login dentro dele). Remover apaga o login salvo da aba.</p>
+      <div id="extras-lista" class="lista"></div>
+      <form id="extras-novo" class="linha novo">
+        <input name="cor" type="color" value="#2f9e6e" title="Cor">
+        <input name="id" placeholder="Sigla" maxlength="6" required>
+        <input name="nome" placeholder="Nome (ex.: Projetos)" required>
+        <input name="url" type="url" placeholder="https://…" required>
+        <label class="check"><input name="externo" type="checkbox"> navegador</label>
+        <button type="submit">Adicionar</button>
+      </form>
+      <p id="extras-msg" class="msg"></p>
+
+      <h2>Skills</h2>
+      <p class="muted">Como a aba Skills roda o Claude Code. Sem janela, o Claude não consegue pedir aprovação:
+        o nível de permissão decide o que ele pode fazer sozinho.</p>
+      <form id="skcfg" class="cfg">
+        <label>Claude Code <input name="bin" required></label>
+        <label>Permissão padrão
+          <select name="modo">
+            <option value="plan">Só planejar (lê, não altera)</option>
+            <option value="dontAsk">Padrão (recusa o que pediria aprovação)</option>
+            <option value="acceptEdits">Aceitar edições de arquivo</option>
+          </select>
+        </label>
+        <label>Pasta de trabalho <span id="skcfg-pasta" class="mono"></span> <button id="skcfg-pasta-btn" type="button">Trocar</button></label>
+        <label>Atualizar a lista a cada
+          <select name="horas">
+            <option value="1">1 hora</option>
+            <option value="6">6 horas</option>
+            <option value="12">12 horas</option>
+            <option value="24">24 horas</option>
+          </select>
+        </label>
+        <label><input name="repos" type="checkbox" class="cb"> também baixar as novidades dos repositórios das skills (git pull, só avanço rápido)</label>
+        <div class="sk-atualizacao"><span id="skcfg-ultima" class="muted"></span> <button id="skcfg-atualizar" type="button">Atualizar agora</button></div>
+        <label class="col">Skills que publicam ou enviam algo (uma por linha). Estas rodam só em modo plano.
+          <textarea name="sensiveis" rows="6"></textarea>
+        </label>
+        <div><button type="submit">Salvar</button></div>
+      </form>
+      <p id="skcfg-msg" class="msg"></p>
+
+      <h3>Skills exibidas</h3>
+      <p class="muted">Desmarque as que não quer ver na aba Skills. Elas continuam instaladas no Claude Code.</p>
+      <div class="linha">
+        <input id="skvis-busca" type="search" placeholder="Filtrar…">
+        <span id="skvis-total" class="estado"></span>
+        <button id="skvis-todas" type="button">Exibir filtradas</button>
+        <button id="skvis-nenhuma" type="button">Ocultar filtradas</button>
+      </div>
+      <div id="skvis-lista"></div>
+
+      <h3>Contas do Claude Code</h3>
+      <p class="muted">Contas usadas na aba Skills. Cada uma tem a própria pasta de configuração e gasta o plano dela.
+        Adicionar abre um terminal para o login; a conta enxerga as mesmas skills da principal.</p>
+      <div id="claude-lista" class="lista"></div>
+      <form id="claude-novo" class="linha novo">
+        <input name="id" placeholder="Sigla" maxlength="12" required>
+        <input name="nome" placeholder="Nome (ex.: Empresa)" required>
+        <button type="submit">Adicionar e fazer login</button>
+      </form>
+      <p id="claude-msg" class="msg"></p>
+
+      <h2>Atualizações</h2>
+      <div class="linha">
+        <span>Versão <b id="upd-versao"></b></span>
+        <span id="upd-status" class="estado"></span>
+        <label class="check"><input id="upd-auto" type="checkbox"> verificar sozinho</label>
+        <button id="upd-verificar" type="button">Verificar agora</button>
+        <button id="upd-ver" type="button" hidden>Ver novidades</button>
+      </div>
+      <details class="changelog">
+        <summary>Histórico de versões</summary>
+        <div id="upd-changelog"></div>
+      </details>
 
       <div id="secao-agendas">
       <h2>Agendas Google</h2>
@@ -67,6 +186,18 @@
       </div>
     </section>
   </main>
+  <dialog id="upd-dialogo">
+    <h2 id="upd-d-titulo"></h2>
+    <p class="muted" id="upd-d-sub"></p>
+    <div id="upd-d-notas"></div>
+    <div id="upd-d-barra" hidden><div></div></div>
+    <p id="upd-d-msg" class="msg"></p>
+    <div class="acoes">
+      <button id="upd-d-pular" type="button">Pular esta versão</button>
+      <button id="upd-d-depois" type="button">Depois</button>
+      <button id="upd-d-ok" type="button" class="primario">Atualizar agora</button>
+    </div>
+  </dialog>
   <script src="app.js"></script>
 </body>
 </html>

@@ -227,3 +227,169 @@ button:hover { border-color: var(--muted); }
 
 .tab.mail { width: 40px; height: 32px; border-radius: 10px; font-size: 15px; margin-top: -4px; }
 .linha label.check { display: flex; align-items: center; gap: 4px; font-size: 13px; color: var(--muted); }
+
+/* ---------- Skills ---------- */
+.tab[data-tab="SKILLS"] { font-size: 22px; }
+#skills.active { display: flex; }
+.sk-catalogo {
+  width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 12px 12px 24px;
+  border-right: 1px solid var(--line);
+  min-height: 0;
+}
+.sk-catalogo h1 { margin: 0 0 12px; font-size: 24px; }
+#sk-busca, #sk-pedido {
+  font: inherit;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  width: 100%;
+}
+#sk-total { font-size: 12px; margin: 6px 0; }
+#sk-lista { flex: 1; overflow-y: auto; padding-right: 6px; }
+#sk-lista h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 12px 0 4px; }
+.sk-item { padding: 8px 10px; border-radius: 8px; cursor: pointer; border: 1px solid transparent; }
+.sk-item:hover { background: var(--panel); }
+.sk-item.ativo { background: var(--panel); border-color: #c96442; }
+.sk-item-nome { font-weight: 600; font-size: 13px; }
+.sk-item-desc {
+  font-size: 12px;
+  color: var(--muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.sk-painel { flex: 1; min-width: 0; overflow-y: auto; padding: 24px 32px 48px; }
+#sk-vazio { margin-top: 8px; }
+.sk-titulo { display: flex; align-items: center; gap: 10px; }
+.sk-titulo h2 { margin: 0; font-size: 20px; }
+#sk-fav { font-size: 16px; padding: 2px 10px; }
+#sk-desc { max-width: 820px; margin: 6px 0 12px; }
+#sk-pedido { resize: vertical; margin-top: 8px; }
+.sk-opcoes { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 10px; font-size: 13px; color: var(--muted); }
+.sk-opcoes label { display: flex; align-items: center; gap: 6px; }
+.sk-opcoes select { color: var(--text); }
+#sk-pasta { color: var(--text); font-family: ui-monospace, monospace; font-size: 12px; }
+.sk-acoes { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
+button.primario { background: #c96442; border-color: #c96442; color: #fff; font-weight: 600; }
+button.primario:hover { background: #b5583a; }
+#sk-saida:not(:empty) {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sk-cab { padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.sk-ev { font-size: 13px; }
+.sk-ev.aviso { margin: 0; }
+.sk-texto { white-space: pre-wrap; line-height: 1.5; }
+.sk-ferr { font-family: ui-monospace, monospace; font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+.sk-ferr b { color: var(--text); }
+.sk-erro { color: var(--danger); white-space: pre-wrap; }
+.sk-fim { font-weight: 600; padding-top: 6px; border-top: 1px solid var(--line); }
+.sk-fim.ok { color: #12a37f; }
+.sk-fim.falhou { color: var(--danger); }
+.sk-hist-titulo { font-size: 16px; margin: 28px 0 8px; }
+#sk-historico { display: flex; flex-direction: column; gap: 4px; }
+.sk-hist {
+  display: grid;
+  grid-template-columns: 20px minmax(140px, auto) 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 7px 12px;
+  border-radius: 8px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  font-size: 13px;
+}
+.sk-hist.ativo { border-color: #c96442; }
+.sk-hist-nome { font-weight: 600; }
+.sk-hist-pedido { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sk-hist.ok .sk-hist-st { color: #12a37f; }
+.sk-hist.erro .sk-hist-st { color: var(--danger); }
+@media (max-width: 900px) {
+  #skills.active { flex-direction: column; }
+  .sk-catalogo { width: auto; max-height: 40%; border-right: none; border-bottom: 1px solid var(--line); }
+}
+
+/* ---------- Configurações ---------- */
+#contas h3 { margin: 18px 0 4px; font-size: 14px; }
+.mono { font-family: ui-monospace, monospace; font-size: 12px; }
+form.cfg {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  max-width: 760px;
+  border-radius: 10px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+form.cfg label { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+form.cfg label.col { flex-direction: column; align-items: stretch; }
+form.cfg input, form.cfg textarea {
+  font: inherit;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  flex: 1 1 280px;
+}
+form.cfg textarea { font-family: ui-monospace, monospace; font-size: 12px; resize: vertical; }
+form.cfg select { color: var(--text); }
+.changelog { margin-top: 8px; max-width: 760px; }
+.changelog summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+#upd-changelog { white-space: pre-wrap; font-size: 13px; padding: 8px 4px; }
+
+#upd-dialogo {
+  width: min(560px, 90vw);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--text);
+  padding: 20px 24px;
+}
+#upd-dialogo::backdrop { background: rgba(0, 0, 0, .45); }
+#upd-dialogo h2 { margin: 0; font-size: 20px; }
+#upd-d-notas {
+  white-space: pre-wrap;
+  font-size: 13px;
+  max-height: 50vh;
+  overflow-y: auto;
+  margin: 12px 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--bg);
+}
+#upd-d-barra { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+#upd-d-barra > div { height: 100%; width: 0; background: #c96442; transition: width .2s; }
+#upd-dialogo .acoes { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+form.cfg input.cb { flex: 0 0 auto; }
+.sk-atualizacao { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13px; }
+#skvis-busca { flex: 1 1 200px; }
+#skvis-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 2px 12px;
+  margin-top: 8px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+.skvis-item { display: flex; align-items: center; gap: 6px; font-size: 13px; padding: 2px 0; cursor: pointer; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }

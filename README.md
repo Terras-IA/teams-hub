@@ -19,8 +19,15 @@ continuam logadas depois de reiniciar.
 - **Compartilhar tela** em reunião, com seletor de tela ou janela.
 - **Fica na bandeja:** fechar a janela só esconde; os avisos continuam.
   Para sair, use o menu da bandeja → **Sair**.
-- **Contas pela interface:** adicione, renomeie, troque a cor ou remova na
-  aba ⚙ **Contas**.
+- **Configurações pela interface:** contas do Teams, abas de site (como a
+  Projetos) e as opções da aba Skills, tudo na aba ⚙ **Configurações**.
+- **Skills do Claude Code** (opcional): se você usa o
+  [Claude Code](https://claude.com/claude-code), a aba ✦ **Skills** lista as
+  skills instaladas e roda cada uma com a conta, a pasta e a permissão que
+  você escolher. Sem o Claude Code, a aba só avisa que ele não foi encontrado.
+- **Atualização com aviso:** quando sai versão nova, o app mostra as
+  novidades e só atualiza se você aceitar. A instalação pede a senha do
+  sistema.
 
 ## Instalar
 
@@ -33,11 +40,14 @@ Ubuntu, Debian, Linux Mint e derivados, 64 bits.
    sudo apt install ./teams-hub_*_amd64.deb
    ```
 
-3. Abra **Teams Hub** no menu de aplicativos. Na aba **Contas**, preencha
+3. Abra **Teams Hub** no menu de aplicativos. Na aba **Configurações**, preencha
    sigla, nome e cor e clique em **Adicionar** para cada conta. Depois entre
    com a conta da Microsoft na aba que aparecer.
 
 Para remover: `sudo apt remove teams-hub`.
+
+Quem instalou a 1.0.0 precisa instalar a 1.1.0 uma vez por aqui. Daí em
+diante, o próprio app avisa das versões novas.
 
 ## Dicas
 
@@ -54,6 +64,10 @@ Para remover: `sudo apt remove teams-hub`.
 O Teams Hub não tem servidor. Ele só abre o Teams e o Outlook da Microsoft
 dentro dele, como um navegador. Logins e configurações ficam no seu
 computador (`~/.config/teams-hub` e `~/.config/Teams Hub`).
+
+Para saber se há versão nova, o app consulta as Releases deste repositório no
+GitHub ao abrir e a cada 6 horas. Dá para desligar em Configurações →
+Atualizações.
 
 O Teams Hub não é um produto da Microsoft nem é afiliado a ela. Microsoft
 Teams e Outlook são marcas da Microsoft.

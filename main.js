@@ -16,11 +16,28 @@ const DEFAULT_CONFIG = {
   contas: [],
   extras: [
     { id: 'GCAL', nome: 'Google Agenda', cor: '#db4437', url: 'https://calendar.google.com/calendar/r/week', externo: true },
+    { id: 'PROJ', nome: 'Projetos', sigla: 'P', cor: '#2f9e6e', url: 'https://projetos.terrasia.app/' },
   ],
   agenda: {
     script: path.join(os.homedir(), '.claude', 'skills', 'terras-agenda', 'scripts', 'terras_agenda.py'),
     dias: 7,
     lembrete_min: 5,
+  },
+  // Central de skills: roda `claude -p "/skill pedido"` com a conta escolhida.
+  claude: {
+    bin: path.join(os.homedir(), '.local', 'bin', 'claude'),
+    pasta: path.join(os.homedir(), 'Documents'),
+    modo: 'dontAsk',
+    // dir null = a conta padrão do Claude Code (~/.claude).
+    contas: [{ id: 'PRINCIPAL', nome: 'Principal', dir: null }],
+    // Skills que publicam ou enviam algo: só rodam em modo plano; o envio
+    // continua no terminal, onde dá para aprovar passo a passo.
+    sensiveis: ['terras-coders-mural', 'terras-linkedin-alvos', 'terras-canal-whatsapp', 'terras-notas',
+      'terras-substack', 'terras-dropi-importar', 'terras-resenhas-importar', 'terrasia-vagas-coders',
+      'terras-zabbix-sites', 'terras-agenda', 'terras-boleto-sankhya'],
+    favoritos: [],
+    ocultas: [],
+    atualizar: { horas: 24, repos: true, ultima: null },
   },
 };
 
@@ -30,7 +47,8 @@ function loadConfig() {
     fs.writeFileSync(CONFIG_FILE, JSON.stringify(DEFAULT_CONFIG, null, 2), { mode: 0o600 });
     return DEFAULT_CONFIG;
   }
-  return { ...DEFAULT_CONFIG, ...JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8')) };
+  const lido = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
+  return { ...DEFAULT_CONFIG, ...lido, claude: { ...DEFAULT_CONFIG.claude, ...lido.claude } };
 }
 
 function saveConfig() {
@@ -61,7 +79,7 @@ function showWindow(tab) {
 
 // Domínios que ficam dentro do app (login, reunião em janela própria). O Google
 // fica fora: ele recusa login em navegador embutido.
-const INTERNAL = /(^|\.)(microsoft\.com|microsoftonline\.com|office\.com|office365\.com|live\.com|skype\.com|teams\.cdn\.office\.net|sharepoint\.com|cloud\.microsoft)$/;
+const INTERNAL = /(^|\.)(microsoft\.com|microsoftonline\.com|office\.com|office365\.com|live\.com|skype\.com|teams\.cdn\.office\.net|sharepoint\.com|cloud\.microsoft|terrasia\.app)$/;
 
 // Diagnóstico: permissões recusadas e erros das páginas vão para este arquivo.
 const LOG_FILE = path.join(os.homedir(), '.cache', 'teams-hub', 'diagnostico.log');
@@ -193,7 +211,7 @@ function updateTray(total, porConta) {
 }
 
 function trayMenu() {
-  const abas = [{ id: 'AGENDA', nome: 'Agenda' }, ...config.contas, ...config.extras, { id: 'CONTAS', nome: 'Contas…' }];
+  const abas = [{ id: 'AGENDA', nome: 'Agenda' }, { id: 'SKILLS', nome: 'Skills' }, ...config.contas, ...config.extras, { id: 'CONTAS', nome: 'Configurações…' }];
   tray.setContextMenu(Menu.buildFromTemplate([
     ...abas.map((c) => ({ label: c.nome, click: () => showWindow(c.id) })),
     { type: 'separator' },
@@ -239,6 +257,7 @@ function parseCalendarios(saida) {
 
 ipcMain.handle('hub:config', () => ({
   ...config,
+  versao: app.getVersion(),
   // A aba Agenda depende do terras-agenda; sem ele, o Hub funciona só com as contas.
   agendaDisponivel: fs.existsSync(config.agenda.script),
   webviewPreload: 'file://' + path.join(__dirname, 'webview-preload.js'),
@@ -272,6 +291,25 @@ ipcMain.handle('hub:contas:salvar', async (_e, contas) => {
   const removidos = config.contas.filter((c) => !novos.has(c.id)).map((c) => c.id);
   for (const c of contas) prepareSession(`persist:${c.id}`);
   config.contas = contas;
+  saveConfig();
+  trayMenu();
+  for (const id of removidos) await session.fromPartition(`persist:${id}`).clearStorageData();
+  return { ok: true, removidos };
+});
+
+// Abas de site (extras): mesma ideia das contas; quem sai perde o login salvo.
+ipcMain.handle('hub:extras:salvar', async (_e, extras) => {
+  const ids = new Set();
+  for (const x of extras) {
+    if (!/^[A-Z0-9]{2,6}$/.test(x.id) || ids.has(x.id)) return { erro: `Sigla inválida ou repetida: ${x.id}` };
+    if (!x.nome?.trim()) return { erro: `A aba ${x.id} precisa de um nome.` };
+    try { if (new URL(x.url).protocol !== 'https:') throw new Error(); } catch { return { erro: `${x.id}: o endereço precisa começar com https://` }; }
+    ids.add(x.id);
+  }
+  if (config.contas.some((c) => ids.has(c.id))) return { erro: 'Uma sigla de aba já é usada por uma conta do Teams.' };
+  const removidos = config.extras.filter((x) => !ids.has(x.id) && !x.externo).map((x) => x.id);
+  for (const x of extras) if (!x.externo) prepareSession(`persist:${x.id}`);
+  config.extras = extras;
   saveConfig();
   trayMenu();
   for (const id of removidos) await session.fromPartition(`persist:${id}`).clearStorageData();
@@ -323,16 +361,21 @@ ipcMain.on('hub:badges', (_e, porAba) => {
   updateTray(total, porAba);
 });
 
-ipcMain.on('hub:notify', (_e, { tab, title, body }) => {
+function notificar({ tab, title, body }) {
   if (!Notification.isSupported()) return;
   const n = new Notification({ title, body, icon: path.join(__dirname, 'icons', 'icon.png') });
   n.on('click', () => showWindow(tab));
   n.show();
-});
+}
+
+ipcMain.on('hub:notify', (_e, msg) => notificar(msg));
 
 ipcMain.on('hub:open-external', (_e, url) => {
   if (/^https:\/\//.test(url)) shell.openExternal(url);
 });
+
+require('./skills').registrar({ config, saveConfig, logDiag, getWin: () => win, notificar });
+require('./updater').registrar({ config, saveConfig, logDiag, getWin: () => win, notificar });
 
 app.whenReady().then(() => {
   for (const c of [...config.contas, ...config.extras]) prepareSession(`persist:${c.id}`);

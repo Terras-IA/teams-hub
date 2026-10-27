@@ -1,6 +1,6 @@
 {
   "name": "teams-hub",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Várias contas do Microsoft Teams e do Outlook numa janela só, com avisos e contador de não lidas",
   "main": "main.js",
   "scripts": {
@@ -29,6 +29,9 @@
     "executableName": "teams-hub",
     "files": [
       "main.js",
+      "skills.js",
+      "CHANGELOG.md",
+      "updater.js",
       "preload.js",
       "webview-preload.js",
       "picker-preload.js",
@@ -62,11 +65,22 @@
         "libgbm1"
       ]
     },
-    "copyright": "Copyright © 2026 TerrasIA"
+    "copyright": "Copyright © 2026 TerrasIA",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Terras-IA",
+        "repo": "teams-hub",
+        "releaseType": "release"
+      }
+    ]
   },
   "homepage": "https://github.com/Terras-IA/teams-hub",
   "repository": {
     "type": "git",
     "url": "https://github.com/Terras-IA/teams-hub.git"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.11"
   }
 }
