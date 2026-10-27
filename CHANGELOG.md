@@ -3,6 +3,7 @@
 ## 1.1.0
 
 - **Aba Skills.** Lista as skills do Claude Code instaladas na máquina, com busca e favoritas, e roda cada uma com o pedido, a conta, a pasta e o nível de permissão que você escolher. A resposta aparece enquanto chega, o histórico fica guardado e dá para continuar a conversa no terminal.
+- **Skills exibidas e lista sempre em dia.** Em Configurações você escolhe quais skills aparecem na aba e de quanto em quanto tempo a lista se atualiza (de 1 a 24 horas), inclusive baixando as novidades dos repositórios das skills. Skill nova gera aviso.
 - **Contas do Claude Code.** Cada conta tem login próprio e usa o próprio plano.
 - **Abas de site.** Agora dá para adicionar, editar e remover abas de site em Configurações. A nova aba Projetos (projetos.terrasia.app) já vem incluída.
 - **Atualização.** O app verifica se saiu versão nova, mostra as novidades e só atualiza com a sua permissão. A instalação pede a senha do sistema.
