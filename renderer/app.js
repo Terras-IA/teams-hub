@@ -347,6 +347,10 @@ function avisoLegivel(txt) {
     return 'Google: o endereço do feed não é o "endereço secreto no formato iCal" (devolveu a página de login). '
       + 'Troque com: terras_agenda.py feeds add --nome Google --url "<endereço secreto>". Enquanto isso, a aba Google Agenda mostra o calendário direto.';
   }
+  if (/invalid_grant/.test(txt)) {
+    return 'Google: a autorização venceu. Enquanto o app do Google estiver em modo teste, ela dura 7 dias. '
+      + 'Renove em Configurações → Agendas Google → Reautorizar (ou pelo botão "Copiar Teams → Google").';
+  }
   return txt.length > 300 ? txt.slice(0, 300) + '…' : txt;
 }
 
@@ -408,15 +412,18 @@ async function espelhar() {
   msg('#espelho-msg', 'Copiando as reuniões para o Google…');
   try {
     let r = await window.hub.espelhar();
-    if (!r.ok && r.precisaEscrita) {
+    if (!r.ok && (r.precisaEscrita || r.expirou)) {
       const g = (await window.hub.google.listar())[0];
-      if (!g) return msg('#espelho-msg', 'Conecte uma agenda Google na aba Contas primeiro.', true);
-      const ok = confirm(`Para copiar, o Teams Hub precisa de permissão para criar o calendário "Teams (cópia)" em ${g.conta} e gravar nele.\n\nOs outros calendários continuam só leitura. O consentimento abre no seu navegador. Continuar?`);
+      if (!g) return msg('#espelho-msg', 'Conecte uma agenda Google em Configurações primeiro.', true);
+      const ok = confirm(r.expirou
+        ? `A autorização do Google para ${g.conta} venceu (com o app do Google em modo teste, ela dura 7 dias).\n\nO consentimento abre no seu navegador; depois a cópia continua sozinha. Reautorizar agora?`
+        : `Para copiar, o Teams Hub precisa de permissão para criar o calendário "Teams (cópia)" em ${g.conta} e gravar nele.\n\nOs outros calendários continuam só leitura. O consentimento abre no seu navegador. Continuar?`);
       if (!ok) return msg('#espelho-msg', 'Cópia cancelada.');
       msg('#espelho-msg', 'Autorize no navegador que abriu (até 6 minutos)…');
       const a = await window.hub.google.autorizar(g.nome, true);
       if (!a.ok) return msg('#espelho-msg', `Não autorizado. ${a.saida.slice(-300)}`, true);
       msg('#espelho-msg', 'Autorizado. Copiando…');
+      carregarAgenda();
       r = await window.hub.espelhar();
     }
     if (!r.ok) return msg('#espelho-msg', `Não consegui copiar. ${r.saida}`, true);

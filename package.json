@@ -1,6 +1,6 @@
 {
   "name": "teams-hub",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Várias contas do Microsoft Teams e do Outlook numa janela só, com avisos e contador de não lidas",
   "main": "main.js",
   "scripts": {

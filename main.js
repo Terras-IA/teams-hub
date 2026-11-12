@@ -173,8 +173,44 @@ function createWindow() {
   });
 }
 
+// ---------- zoom ----------
+// Um zoom só para o app inteiro (barra de abas e todos os painéis), salvo na
+// config. Sem menu de aplicação, os atalhos padrão do Chromium não chegam aos
+// webviews, então Ctrl +, Ctrl -, Ctrl 0 e Ctrl+roda são tratados aqui.
+const ZOOM_MIN = -3;
+const ZOOM_MAX = 4;
+const ZOOM_PASSO = 0.5;
+
+function aplicarZoom(wc) {
+  if (!wc.isDestroyed()) wc.setZoomLevel(config.zoom || 0);
+}
+
+function mudarZoom(delta) {
+  const atual = config.zoom || 0;
+  const novo = delta === null ? 0 : Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, atual + delta));
+  if (novo === atual) return;
+  config.zoom = novo;
+  saveConfig();
+  for (const wc of require('electron').webContents.getAllWebContents()) {
+    if (wc.getType() === 'window' || wc.getType() === 'webview') aplicarZoom(wc);
+  }
+}
+
 app.on('web-contents-created', (_e, wc) => {
-  if (wc.getType() !== 'webview') return;
+  const tipo = wc.getType();
+  if (tipo === 'window' || tipo === 'webview') {
+    wc.on('did-finish-load', () => aplicarZoom(wc));
+    wc.on('before-input-event', (ev, input) => {
+      if (input.type !== 'keyDown' || !(input.control || input.meta) || input.alt) return;
+      const k = input.key;
+      const cod = input.code;
+      if (k === '+' || k === '=' || cod === 'NumpadAdd') { ev.preventDefault(); mudarZoom(ZOOM_PASSO); }
+      else if (k === '-' || k === '_' || cod === 'NumpadSubtract') { ev.preventDefault(); mudarZoom(-ZOOM_PASSO); }
+      else if (k === '0' || cod === 'Numpad0') { ev.preventDefault(); mudarZoom(null); }
+    });
+    wc.on('zoom-changed', (_ev, direcao) => mudarZoom(direcao === 'in' ? ZOOM_PASSO : -ZOOM_PASSO));
+  }
+  if (tipo !== 'webview') return;
   const quem = () => { try { return new URL(wc.getURL()).hostname; } catch { return '?'; } };
   wc.on('console-message', (ev) => {
     const nivel = ev.level ?? ev.params?.level;
@@ -297,13 +333,22 @@ ipcMain.handle('hub:contas:salvar', async (_e, contas) => {
   return { ok: true, removidos };
 });
 
+// http só para endereço local: app rodando na máquina ou na rede interna.
+const LOCAL = /^(localhost|.+\.localhost|.+\.local|127(\.\d+){3}|\[::1\]|10(\.\d+){3}|192\.168(\.\d+){2}|172\.(1[6-9]|2\d|3[01])(\.\d+){2})$/;
+function enderecoAceito(url) {
+  try {
+    const u = new URL(url);
+    return u.protocol === 'https:' || (u.protocol === 'http:' && LOCAL.test(u.hostname));
+  } catch { return false; }
+}
+
 // Abas de site (extras): mesma ideia das contas; quem sai perde o login salvo.
 ipcMain.handle('hub:extras:salvar', async (_e, extras) => {
   const ids = new Set();
   for (const x of extras) {
     if (!/^[A-Z0-9]{2,6}$/.test(x.id) || ids.has(x.id)) return { erro: `Sigla inválida ou repetida: ${x.id}` };
     if (!x.nome?.trim()) return { erro: `A aba ${x.id} precisa de um nome.` };
-    try { if (new URL(x.url).protocol !== 'https:') throw new Error(); } catch { return { erro: `${x.id}: o endereço precisa começar com https://` }; }
+    if (!enderecoAceito(x.url)) return { erro: `${x.id}: use https://, ou http:// só para endereço local (localhost, 127.0.0.1, rede interna).` };
     ids.add(x.id);
   }
   if (config.contas.some((c) => ids.has(c.id))) return { erro: 'Uma sigla de aba já é usada por uma conta do Teams.' };
@@ -343,7 +388,8 @@ ipcMain.handle('hub:google:autorizar', async (_e, nome, escrita = false) => {
 ipcMain.handle('hub:espelhar', async () => {
   const r = await agendaCli(['espelhar', '--json'], 5 * 60_000);
   try { return { ok: true, ...JSON.parse(r.saida.slice(r.saida.indexOf('{'))) }; } catch {
-    return { ok: false, precisaEscrita: /--escrita/.test(r.saida), saida: r.saida.slice(-400) };
+    // invalid_grant: a autorização do Google venceu (app OAuth em modo teste dura 7 dias).
+    return { ok: false, precisaEscrita: /--escrita/.test(r.saida), expirou: /invalid_grant/.test(r.saida), saida: r.saida.slice(-400) };
   }
 });
 

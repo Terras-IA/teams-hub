@@ -1,5 +1,11 @@
 # Novidades do Teams Hub
 
+## 1.2.0
+
+- **Zoom.** Ctrl +, Ctrl - e Ctrl 0 (ou Ctrl + rodinha do mouse) aumentam, diminuem e voltam ao normal o tamanho de tudo: barra de abas, contas e painéis. O nível fica salvo para a próxima vez.
+- **Google vencido.** Quando a autorização do Google vence, "Copiar Teams → Google" oferece reautorizar na hora e continua a cópia; a aba Agenda explica o aviso em vez de mostrar o erro técnico.
+- **Abas de site com endereço local.** Aceita `http://` para endereço da própria máquina ou da rede interna (localhost, 127.0.0.1, 192.168.x.x, nomes .local). Site da internet continua só com `https://`.
+
 ## 1.1.0
 
 - **Aba Skills.** Lista as skills do Claude Code instaladas na máquina, com busca e favoritas, e roda cada uma com o pedido, a conta, a pasta e o nível de permissão que você escolher. A resposta aparece enquanto chega, o histórico fica guardado e dá para continuar a conversa no terminal.
